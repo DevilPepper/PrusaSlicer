@@ -1,0 +1,66 @@
+name: Build and Release PrusaSlicer
+
+on:
+  schedule:
+    - cron: '0 12 * * *'
+  workflow_dispatch:
+
+jobs:
+  get-tags:
+    runs-on: ubuntu-latest
+    outputs:
+      latest_tag: ${{ steps.latest_tag.outputs.latest_tag }}
+      prusa_latest_tag: ${{ steps.prusa_latest_tag.outputs.prusa_latest_tag }}
+    steps:
+    - name: Checkout this repository
+      uses: actions/checkout@v3
+
+    - name: Get the latest release tag of this repository
+      id: latest_tag
+      run: |
+        latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1) 2> /dev/null || echo "v0.0.0" )
+        echo "latest_tag=$latest_tag" >> $GITHUB_OUTPUT
+
+    - name: Get the latest release tag of PrusaSlicer
+      id: prusa_latest_tag
+      run: |
+        prusa_latest_tag=$(curl -s https://api.github.com/repos/prusa3d/PrusaSlicer/releases/latest | jq -r .tag_name)
+        echo "prusa_latest_tag=$prusa_latest_tag" >> $GITHUB_OUTPUT
+
+  build-release:
+    needs: get-tags
+    runs-on: ubuntu-latest
+    if: needs.get-tags.outputs.latest_tag != needs.get-tags.outputs.prusa_latest_tag
+    steps:
+    - name: Clone PrusaSlicer at the latest tag
+      env:
+        prusa_latest_tag: ${{ needs.get-tags.outputs.prusa_latest_tag }}
+      run: git clone --branch $prusa_latest_tag https://github.com/prusa3d/PrusaSlicer.git
+
+    - name: Build dependencies
+      run: |
+        cd PrusaSlicer/deps
+        mkdir build
+        cd build
+        cmake .. -DDEP_WX_GTK3=ON
+        make
+
+    - name: Build PrusaSlicer
+      run: |
+        cd PrusaSlicer
+        mkdir build
+        cd build
+        cmake .. -DSLIC3R_STATIC=1 -DSLIC3R_DESKTOP_INTEGRATION=0 -DSLIC3R_GTK=3 -DSLIC3R_PCH=OFF -DCMAKE_PREFIX_PATH=$(pwd)/../deps/build/destdir/usr/local
+        make -j4
+        cd src
+        tar -cavf ../prusa-slicer.tar.gz *
+
+    - name: Create a release
+      uses: actions/create-release@v1
+      with:
+        tag_name: ${{ needs.get-tags.outputs.prusa_latest_tag }}
+        release_name: PrusaSlicer ${{ needs.get-tags.outputs.prusa_latest_tag }}
+        body: "Automated build of PrusaSlicer version ${{ needs.get-tags.outputs.prusa_latest_tag }}."
+        draft: false
+        prerelease: false
+        files: PrusaSlicer/build/prusa-slicer.tar.gz
