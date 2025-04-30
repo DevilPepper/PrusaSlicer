@@ -59,6 +59,9 @@ jobs:
     - name: Replace GMP url
       run: sed -i 's|https://gmplib.org/download/gmp/gmp-6.2.1.tar.bz2|https://github.com/DevilPepper/PrusaSlicer/releases/download/gmp/gmp-6.2.1.tar.bz2|' PrusaSlicer/deps/+GMP/GMP.cmake
 
+    - name: Replace Eigen hash
+      run: sed -i 's|e09b89aae054e9778ee3f606192ee76d645eec82c402c01c648b1fe46b6b9857|4815118c085ff1d5a21f62218a3b2ac62555e9b8d7bacd5093892398e7a92c4b|' PrusaSlicer/deps/+Eigen/Eigen.cmake
+
     - name: Build dependencies
       run: |
         mkdir -p PrusaSlicer/deps/build
