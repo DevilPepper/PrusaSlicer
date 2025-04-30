@@ -151,6 +151,9 @@ jobs:
     - build
     runs-on: ubuntu-latest
     steps:
+    - name: Checkout this repository
+      uses: actions/checkout@v4
+
     - name: Clone PrusaSlicer at the latest tag
       env:
         prusa_latest_tag: ${{ needs.get-tags.outputs.prusa_latest_tag }}
