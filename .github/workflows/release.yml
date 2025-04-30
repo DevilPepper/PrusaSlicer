@@ -21,7 +21,7 @@ jobs:
       prusa_latest_tag: ${{ steps.prusa_latest_tag.outputs.prusa_latest_tag }}
     steps:
     - name: Checkout this repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Get the latest release tag of this repository
       id: latest_tag
@@ -41,6 +41,9 @@ jobs:
     runs-on: ubuntu-latest
     if: needs.get-tags.outputs.latest_tag != needs.get-tags.outputs.prusa_latest_tag
     steps:
+    - name: Checkout this repository
+      uses: actions/checkout@v4
+
     - name: Clone PrusaSlicer at the latest tag
       env:
         prusa_latest_tag: ${{ needs.get-tags.outputs.prusa_latest_tag }}
@@ -75,6 +78,9 @@ jobs:
     - build-deps
     runs-on: ubuntu-latest
     steps:
+    - name: Checkout this repository
+      uses: actions/checkout@v4
+
     - name: Clone PrusaSlicer at the latest tag
       env:
         prusa_latest_tag: ${{ needs.get-tags.outputs.prusa_latest_tag }}
@@ -111,6 +117,9 @@ jobs:
     - build-deps
     runs-on: ubuntu-latest
     steps:
+    - name: Checkout this repository
+      uses: actions/checkout@v4
+
     - name: Clone PrusaSlicer at the latest tag
       env:
         prusa_latest_tag: ${{ needs.get-tags.outputs.prusa_latest_tag }}
