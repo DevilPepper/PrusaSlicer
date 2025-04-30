@@ -65,8 +65,14 @@ jobs:
         cd build
         cmake .. -DSLIC3R_STATIC=1 -DSLIC3R_DESKTOP_INTEGRATION=0 -DSLIC3R_GTK=3 -DSLIC3R_PCH=OFF -DCMAKE_PREFIX_PATH=$(pwd)/../deps/build/destdir/usr/local
         make -j4
-        cd src
-        tar -cavf ../prusa-slicer.tar.gz *
+
+    - name: Zip it
+      run: |
+        cd PrusaSlicer
+        mkdir -p PrusaSlicer/bin
+        cp -r src/platform/unix/*.desktop resources PrusaSlicer/
+        cp build/src/prusa-slicer PrusaSlicer/bin/
+        tar -cavf PrusaSlicer.tar.gz PrusaSlicer/
 
     - name: Create a release
       uses: actions/create-release@v1
@@ -76,4 +82,4 @@ jobs:
         body: "Automated build of PrusaSlicer version ${{ needs.get-tags.outputs.prusa_latest_tag }}."
         draft: false
         prerelease: false
-        files: PrusaSlicer/build/prusa-slicer.tar.gz
+        files: PrusaSlicer/PrusaSlicer.tar.gz
