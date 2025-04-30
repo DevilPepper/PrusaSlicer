@@ -56,6 +56,9 @@ jobs:
 
     - uses: ./.github/workflows/apt.yml
 
+    - name: Replace GMP url
+      run: sed -i 's|https://gmplib.org/download/gmp/gmp-6.2.1.tar.bz2|https://github.com/DevilPepper/PrusaSlicer/releases/download/gmp/gmp-6.2.1.tar.bz2|' PrusaSlicer/deps/+GMP/GMP.cmake
+
     - name: Build dependencies
       run: |
         mkdir -p PrusaSlicer/deps/build
