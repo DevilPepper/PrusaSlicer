@@ -57,7 +57,7 @@ jobs:
         path: PrusaSlicer/deps/build
         key: deps-${{ hashFiles('deps.lock') }}
 
-    - uses: ./.github/workflows/apt.yml
+    - uses: ./.github/actions/apt
 
     - name: Replace GMP url
       run: sed -i 's|https://gmplib.org/download/gmp/gmp-6.2.1.tar.bz2|https://github.com/DevilPepper/PrusaSlicer/releases/download/gmp/gmp-6.2.1.tar.bz2|' PrusaSlicer/deps/+GMP/GMP.cmake
@@ -95,7 +95,7 @@ jobs:
         key: deps-${{ hashFiles('deps.lock') }}
         fail-on-cache-miss: true
 
-    - uses: ./.github/workflows/apt.yml
+    - uses: ./.github/actions/apt
 
     - name: Build PrusaSlicer
       run: |
@@ -134,7 +134,7 @@ jobs:
         key: deps-${{ hashFiles('deps.lock') }}
         fail-on-cache-miss: true
 
-    - uses: ./.github/workflows/apt.yml
+    - uses: ./.github/actions/apt
 
     - name: Build PrusaSlicer
       run: |

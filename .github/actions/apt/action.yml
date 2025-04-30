@@ -1,0 +1,31 @@
+name: APT
+description: Install APT packages
+runs:
+  using: composite
+  steps:
+  - name: Write deps to file
+    run: |
+      echo \
+        git \
+        build-essential \
+        autoconf \
+        cmake \
+        libglu1-mesa-dev \
+        libgtk-3-dev \
+        libdbus-1-dev \
+        libwebkit2gtk-4.1-dev \
+        texinfo \
+      > apt.lock
+
+  - uses: actions/cache@v4
+    with:
+      path: |
+        /var/cache/apt
+        /var/lib/apt
+      key: apt-${{ hashFiles('apt.lock') }}-${{ runner.os }}-${{ runner.image }}-${{ runner.imageVersion }}
+
+  - name: Update and Install Dependencies
+    run: |
+      apt_packages=($(cat apt.lock))
+      sudo apt update
+      sudo apt install -y "${apt_packages[@]}"
