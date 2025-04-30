@@ -4,6 +4,7 @@ runs:
   using: composite
   steps:
   - name: Write deps to file
+    shell: bash
     run: |
       echo \
         git \
@@ -25,6 +26,7 @@ runs:
       key: apt-${{ hashFiles('apt.lock') }}-${{ runner.os }}-${{ runner.image }}-${{ runner.imageVersion }}
 
   - name: Update and Install Dependencies
+    shell: bash
     run: |
       apt_packages=($(cat apt.lock))
       sudo apt update
