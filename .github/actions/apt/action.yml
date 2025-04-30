@@ -18,12 +18,12 @@ runs:
         texinfo \
       > apt.lock
 
-  - uses: actions/cache@v4
-    with:
-      path: |
-        /var/cache/apt
-        /var/lib/apt
-      key: apt-${{ hashFiles('apt.lock') }}-${{ runner.os }}-${{ runner.image }}-${{ runner.imageVersion }}
+  # - uses: actions/cache@v4
+  #   with:
+  #     path: |
+  #       /var/cache/apt
+  #       /var/lib/apt
+  #     key: apt-${{ hashFiles('apt.lock') }}-${{ runner.os }}-${{ runner.image }}-${{ runner.imageVersion }}
 
   - name: Update and Install Dependencies
     shell: bash
