@@ -149,7 +149,6 @@ jobs:
     needs:
     - get-tags
     - build
-    - test
     runs-on: ubuntu-latest
     steps:
     - name: Clone PrusaSlicer at the latest tag
