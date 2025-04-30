@@ -170,12 +170,12 @@ jobs:
         cp build/src/prusa-slicer PrusaSlicer/bin/
         tar -cavf PrusaSlicer.tar.gz PrusaSlicer/
 
-    - name: Create a release
-      uses: actions/create-release@v1
-      with:
-        tag_name: ${{ needs.get-tags.outputs.prusa_latest_tag }}
-        release_name: PrusaSlicer ${{ needs.get-tags.outputs.prusa_latest_tag }}
-        body: "Automated build of PrusaSlicer version ${{ needs.get-tags.outputs.prusa_latest_tag }}."
-        draft: false
-        prerelease: false
-        files: PrusaSlicer/PrusaSlicer.tar.gz
+    - name: Create release with binaries
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GIT_TAG: ${{ needs.get-tags.outputs.prusa_latest_tag }}
+      run: |
+        gh release create $GIT_TAG PrusaSlicer/PrusaSlicer.tar.gz \
+          --title "PrusaSlicer $GIT_TAG" \
+          --notes "Automated build of PrusaSlicer $GIT_TAG" \
+          --latest
