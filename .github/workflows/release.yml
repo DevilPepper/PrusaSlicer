@@ -176,7 +176,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GIT_TAG: ${{ needs.get-tags.outputs.prusa_latest_tag }}
       run: |
-        gh release create $GIT_TAG PrusaSlicer/PrusaSlicer.tar.gz \
+        gh release create $GIT_TAG \
           --title "PrusaSlicer $GIT_TAG" \
           --notes "Automated build of PrusaSlicer $GIT_TAG" \
-          --latest
+          --latest \
+          PrusaSlicer/PrusaSlicer.tar.gz
