@@ -26,3 +26,11 @@ ENV LANG=en_US.UTF-8 \
     LC_ALL=en_US.UTF-8
 
 WORKDIR /workspace
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+    automake \
+    m4 \
+    perl \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
