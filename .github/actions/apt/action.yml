@@ -7,15 +7,17 @@ runs:
     shell: bash
     run: |
       echo \
-        git \
-        build-essential \
         autoconf \
+        build-essential \
         cmake \
+        git \
+        libdbus-1-dev \
         libglu1-mesa-dev \
         libgtk-3-dev \
-        libdbus-1-dev \
         libwebkit2gtk-4.1-dev \
         texinfo \
+        \
+        liblzma-dev \
       > apt.lock
 
   # - uses: actions/cache@v4
