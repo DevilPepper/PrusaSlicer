@@ -96,7 +96,7 @@ jobs:
       id: cache-build
       with:
         path: PrusaSlicer/build
-        key: deps-${{ needs.get-tags.outputs.prusa_latest_tag }}
+        key: build-${{ needs.get-tags.outputs.prusa_latest_tag }}
 
     - uses: ./.github/actions/apt
 
@@ -105,7 +105,13 @@ jobs:
       run: |
         mkdir -p PrusaSlicer/build
         cd PrusaSlicer/build
-        cmake .. -DSLIC3R_STATIC=1 -DSLIC3R_DESKTOP_INTEGRATION=0 -DSLIC3R_GTK=3 -DSLIC3R_PCH=OFF -DCMAKE_PREFIX_PATH=$(pwd)/../deps/build/destdir/usr/local
+        cmake .. \
+          -DSLIC3R_STATIC=1 \
+          -DSLIC3R_DESKTOP_INTEGRATION=0 \
+          -DSLIC3R_GTK=3 \
+          -DSLIC3R_PCH=OFF \
+          -DCMAKE_PREFIX_PATH=$(pwd)/../deps/build/destdir/usr/local \
+          -DCMAKE_EXE_LINKER_FLAGS="-static"
         make -j4
 
   test:
@@ -164,7 +170,7 @@ jobs:
     - uses: actions/cache/restore@v4
       with:
         path: PrusaSlicer/build
-        key: deps-${{ needs.get-tags.outputs.prusa_latest_tag }}
+        key: build-${{ needs.get-tags.outputs.prusa_latest_tag }}
         fail-on-cache-miss: true
 
     - name: Zip it
