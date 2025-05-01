@@ -39,14 +39,16 @@ jobs:
     needs:
     - get-tags
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/devilpepper/prusaslicer
+      env:
+        prusa_latest_tag: ${{ needs.get-tags.outputs.prusa_latest_tag }}
     if: needs.get-tags.outputs.latest_tag != needs.get-tags.outputs.prusa_latest_tag
     steps:
     - name: Checkout this repository
       uses: actions/checkout@v4
 
     - name: Clone PrusaSlicer at the latest tag
-      env:
-        prusa_latest_tag: ${{ needs.get-tags.outputs.prusa_latest_tag }}
       run: git clone --depth 1 --branch $prusa_latest_tag https://github.com/prusa3d/PrusaSlicer.git
 
     - name: Create "lockfile"
@@ -56,11 +58,7 @@ jobs:
       id: cache-deps
       with:
         path: PrusaSlicer/deps/build
-        key: deps-${{ hashFiles('deps.lock') }}-static
-
-    - name: Install apt packages
-      if: steps.cache-deps.outputs.cache-hit != 'true'
-      uses: ./.github/actions/apt
+        key: deps-${{ hashFiles('deps.lock') }}
 
     - name: Replace GMP url
       run: sed -i 's|https://gmplib.org/download/gmp/gmp-6.2.1.tar.bz2|https://github.com/DevilPepper/PrusaSlicer/releases/download/gmp/gmp-6.2.1.tar.bz2|' PrusaSlicer/deps/+GMP/GMP.cmake
@@ -78,13 +76,15 @@ jobs:
     - get-tags
     - build-deps
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/devilpepper/prusaslicer
+      env:
+        prusa_latest_tag: ${{ needs.get-tags.outputs.prusa_latest_tag }}
     steps:
     - name: Checkout this repository
       uses: actions/checkout@v4
 
     - name: Clone PrusaSlicer at the latest tag
-      env:
-        prusa_latest_tag: ${{ needs.get-tags.outputs.prusa_latest_tag }}
       run: git clone --depth 1 --branch $prusa_latest_tag https://github.com/prusa3d/PrusaSlicer.git
 
     - name: Create "lockfile"
@@ -93,18 +93,14 @@ jobs:
     - uses: actions/cache/restore@v4
       with:
         path: PrusaSlicer/deps/build
-        key: deps-${{ hashFiles('deps.lock') }}-static
+        key: deps-${{ hashFiles('deps.lock') }}
         fail-on-cache-miss: true
 
     - uses: actions/cache@v4
       id: cache-build
       with:
         path: PrusaSlicer/build
-        key: build-${{ needs.get-tags.outputs.prusa_latest_tag }}-static
-
-    - name: Install apt packages
-      if: steps.cache-build.outputs.cache-hit != 'true'
-      uses: ./.github/actions/apt
+        key: build-${{ needs.get-tags.outputs.prusa_latest_tag }}
 
     - name: Build PrusaSlicer
       if: steps.cache-build.outputs.cache-hit != 'true'
@@ -125,14 +121,16 @@ jobs:
     - get-tags
     - build-deps
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/devilpepper/prusaslicer
+      env:
+        prusa_latest_tag: ${{ needs.get-tags.outputs.prusa_latest_tag }}
     continue-on-error: true
     steps:
     - name: Checkout this repository
       uses: actions/checkout@v4
 
     - name: Clone PrusaSlicer at the latest tag
-      env:
-        prusa_latest_tag: ${{ needs.get-tags.outputs.prusa_latest_tag }}
       run: git clone --depth 1 --branch $prusa_latest_tag https://github.com/prusa3d/PrusaSlicer.git
 
     - name: Create "lockfile"
@@ -141,10 +139,8 @@ jobs:
     - uses: actions/cache/restore@v4
       with:
         path: PrusaSlicer/deps/build
-        key: deps-${{ hashFiles('deps.lock') }}-static
+        key: deps-${{ hashFiles('deps.lock') }}
         fail-on-cache-miss: true
-
-    - uses: ./.github/actions/apt
 
     - name: Build PrusaSlicer
       run: |
@@ -177,7 +173,7 @@ jobs:
     - uses: actions/cache/restore@v4
       with:
         path: PrusaSlicer/build
-        key: build-${{ needs.get-tags.outputs.prusa_latest_tag }}-static
+        key: build-${{ needs.get-tags.outputs.prusa_latest_tag }}
         fail-on-cache-miss: true
 
     - name: Zip it
