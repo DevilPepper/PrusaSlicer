@@ -132,7 +132,7 @@ jobs:
           -DSLIC3R_GTK=3 \
           -DSLIC3R_PCH=OFF \
           -DCMAKE_PREFIX_PATH=$(pwd)/../deps/build/destdir/usr/local \
-          -DCMAKE_EXE_LINKER_FLAGS="-static"
+          -DCMAKE_EXE_LINKER_FLAGS="-static -Wl,-Bdynamic /usr/lib/x86_64-linux-gnu/liblzma.so -Wl,-Bstatic"
 
     - name: CMakeError.log
       if: failure()
