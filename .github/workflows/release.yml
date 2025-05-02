@@ -73,6 +73,10 @@ jobs:
         cd PrusaSlicer/deps/build
         cmake .. -DDEP_WX_GTK3=ON -DCMAKE_EXE_LINKER_FLAGS="-static"
 
+    - name: CMakeError.log
+      if: failure()
+      run: cat PrusaSlicer/deps/build/CMakeFiles/CMakeError.log 1>&2
+
     - name: Upload CMakeError.log
       if: failure()
       uses: actions/upload-artifact@v4
@@ -129,6 +133,10 @@ jobs:
           -DSLIC3R_PCH=OFF \
           -DCMAKE_PREFIX_PATH=$(pwd)/../deps/build/destdir/usr/local \
           -DCMAKE_EXE_LINKER_FLAGS="-static"
+
+    - name: CMakeError.log
+      if: failure()
+      run: cat PrusaSlicer/build/CMakeFiles/CMakeError.log 1>&2
 
     - name: Upload CMakeError.log
       if: failure()
