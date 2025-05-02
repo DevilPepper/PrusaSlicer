@@ -71,7 +71,7 @@ jobs:
       run: |
         mkdir -p PrusaSlicer/deps/build
         cd PrusaSlicer/deps/build
-        cmake .. -DDEP_WX_GTK3=ON -DCMAKE_EXE_LINKER_FLAGS="-static"
+        cmake .. -DDEP_WX_GTK3=ON
 
     - name: CMakeError.log
       if: failure()
@@ -131,8 +131,7 @@ jobs:
           -DSLIC3R_DESKTOP_INTEGRATION=0 \
           -DSLIC3R_GTK=3 \
           -DSLIC3R_PCH=OFF \
-          -DCMAKE_PREFIX_PATH=$(pwd)/../deps/build/destdir/usr/local \
-          -DCMAKE_EXE_LINKER_FLAGS="-static -Wl,-Bdynamic /usr/lib/x86_64-linux-gnu/liblzma.so -Wl,-Bstatic"
+          -DCMAKE_PREFIX_PATH=$(pwd)/../deps/build/destdir/usr/local
 
     - name: CMakeError.log
       if: failure()
