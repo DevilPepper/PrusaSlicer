@@ -3,6 +3,7 @@ FROM debian:12.10
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
   autoconf \
+  automake \
   build-essential \
   ca-certificates \
   cmake \
@@ -26,18 +27,3 @@ ENV LANG=en_US.UTF-8 \
     LC_ALL=en_US.UTF-8
 
 WORKDIR /workspace
-
-RUN apt-get update \
- && apt-get install -y --no-install-recommends \
-    automake \
-    m4 \
-    perl \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
-
-
-RUN apt-get update \
- && apt-get install -y --no-install-recommends \
-  pkg-config \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
