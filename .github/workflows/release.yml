@@ -66,12 +66,24 @@ jobs:
     - name: Replace Eigen hash
       run: sed -i 's|e09b89aae054e9778ee3f606192ee76d645eec82c402c01c648b1fe46b6b9857|4815118c085ff1d5a21f62218a3b2ac62555e9b8d7bacd5093892398e7a92c4b|' PrusaSlicer/deps/+Eigen/Eigen.cmake
 
-    - name: Build dependencies
+    - name: Configure dependencies build
       if: steps.cache-deps.outputs.cache-hit != 'true'
       run: |
         mkdir -p PrusaSlicer/deps/build
         cd PrusaSlicer/deps/build
         cmake .. -DDEP_WX_GTK3=ON -DCMAKE_EXE_LINKER_FLAGS="-static"
+
+    - name: Upload CMakeError.log
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: dependencies-build-errors
+        path: PrusaSlicer/deps/build/CMakeFiles/CMakeError.log
+
+    - name: Build dependencies
+      if: steps.cache-deps.outputs.cache-hit != 'true'
+      run: |
+        cd PrusaSlicer/deps/build
         make
 
   build:
@@ -105,7 +117,7 @@ jobs:
         path: PrusaSlicer/build
         key: build-${{ needs.get-tags.outputs.prusa_latest_tag }}
 
-    - name: Build PrusaSlicer
+    - name: Configure PrusaSlicer build
       if: steps.cache-build.outputs.cache-hit != 'true'
       run: |
         mkdir -p PrusaSlicer/build
@@ -117,6 +129,18 @@ jobs:
           -DSLIC3R_PCH=OFF \
           -DCMAKE_PREFIX_PATH=$(pwd)/../deps/build/destdir/usr/local \
           -DCMAKE_EXE_LINKER_FLAGS="-static"
+
+    - name: Upload CMakeError.log
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-errors
+        path: PrusaSlicer/build/CMakeFiles/CMakeError.log
+
+    - name: Build PrusaSlicer
+      if: steps.cache-build.outputs.cache-hit != 'true'
+      run: |
+        cd PrusaSlicer/build
         make -j4
 
   test:
