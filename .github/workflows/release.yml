@@ -27,12 +27,14 @@ jobs:
       id: latest_tag
       run: |
         latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1) 2> /dev/null || echo "v0.0.0" )
+        echo "$latest_tag"
         echo "latest_tag=$latest_tag" >> $GITHUB_OUTPUT
 
     - name: Get the latest release tag of PrusaSlicer
       id: prusa_latest_tag
       run: |
         prusa_latest_tag=$(curl -s https://api.github.com/repos/prusa3d/PrusaSlicer/releases/latest | jq -r .tag_name)
+        echo "$prusa_latest_tag"
         echo "prusa_latest_tag=$prusa_latest_tag" >> $GITHUB_OUTPUT
 
   build-deps:
