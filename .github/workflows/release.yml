@@ -150,6 +150,19 @@ jobs:
         cd PrusaSlicer/build
         make -j4
 
+    - name: Zip it
+      run: |
+        cd PrusaSlicer
+        mkdir -p PrusaSlicer/bin
+        cp -r src/platform/unix/*.desktop resources PrusaSlicer/
+        cp build/src/prusa-slicer PrusaSlicer/bin/
+        tar -cavf PrusaSlicer.tar.gz PrusaSlicer/
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: prusa-slicer
+        path: PrusaSlicer/PrusaSlicer.tar.gz
+
   test:
     needs:
     - get-tags
@@ -199,24 +212,9 @@ jobs:
     - name: Checkout this repository
       uses: actions/checkout@v4
 
-    - name: Clone PrusaSlicer at the latest tag
-      env:
-        prusa_latest_tag: ${{ needs.get-tags.outputs.prusa_latest_tag }}
-      run: git clone --depth 1 --branch $prusa_latest_tag https://github.com/prusa3d/PrusaSlicer.git
-
-    - uses: actions/cache/restore@v4
+    - uses: actions/download-artifact@v4
       with:
-        path: PrusaSlicer/build
-        key: build-${{ needs.get-tags.outputs.prusa_latest_tag }}
-        fail-on-cache-miss: true
-
-    - name: Zip it
-      run: |
-        cd PrusaSlicer
-        mkdir -p PrusaSlicer/bin
-        cp -r src/platform/unix/*.desktop resources PrusaSlicer/
-        cp build/src/prusa-slicer PrusaSlicer/bin/
-        tar -cavf PrusaSlicer.tar.gz PrusaSlicer/
+        name: prusa-slicer
 
     - name: Create release with binaries
       env:
@@ -227,4 +225,4 @@ jobs:
           --title "PrusaSlicer $GIT_TAG" \
           --notes "Automated build of PrusaSlicer $GIT_TAG" \
           --latest \
-          PrusaSlicer/PrusaSlicer.tar.gz
+          PrusaSlicer.tar.gz
