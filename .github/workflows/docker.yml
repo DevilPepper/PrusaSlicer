@@ -40,7 +40,14 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
+    - uses: actions/cache@v4
+      id: cache-dockerfile
+      with:
+        path: Dockerfile.sha256sum
+        key: dockerfile-${{ hashFiles('Dockerfile') }}
+
     - name: Build and push
+      if: steps.cache-dockerfile.outputs.cache-hit != 'true'
       uses: docker/build-push-action@v3.0.0
       with:
         push: true
@@ -49,3 +56,6 @@ jobs:
         tags: |
           ghcr.io/${{ env.image_name }}:latest
           ghcr.io/${{ env.image_name }}:${{ env.sha }}
+
+    - name: Hash the Dockerfile for cache
+      run: sha256sum Dockerfile > Dockerfile.sha256sum
