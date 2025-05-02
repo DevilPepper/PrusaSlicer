@@ -216,13 +216,19 @@ jobs:
       with:
         name: prusa-slicer
 
+    - name: Get Debian version from Dockerfile
+      run: |
+        debian_version=$(head -n 1 Dockerfile | cut -d':' -f2)
+        echo "debian_version=$debian_version" >> $GITHUB_ENV
+
     - name: Create release with binaries
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GIT_TAG: ${{ needs.get-tags.outputs.prusa_latest_tag }}
+        DEBIAN_VERSION: ${{ env.debian_version }}
       run: |
         gh release create $GIT_TAG \
           --title "PrusaSlicer $GIT_TAG" \
-          --notes "Automated build of PrusaSlicer $GIT_TAG" \
+          --notes "Built for Debian $DEBIAN_VERSION" \
           --latest \
           PrusaSlicer.tar.gz
