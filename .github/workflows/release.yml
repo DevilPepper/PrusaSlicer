@@ -50,6 +50,7 @@ jobs:
       image: ${{ needs.get-tags.outputs.image_name }}
       env:
         prusa_latest_tag: ${{ needs.get-tags.outputs.prusa_latest_tag }}
+        current_repo: $${{ github.repository }}
     if: needs.get-tags.outputs.latest_tag != needs.get-tags.outputs.prusa_latest_tag
     steps:
     - name: Checkout this repository
@@ -68,10 +69,7 @@ jobs:
         key: deps-${{ hashFiles('deps.lock') }}
 
     - name: Replace GMP url
-      run: sed -i 's|https://gmplib.org/download/gmp/gmp-6.2.1.tar.bz2|https://github.com/${GITHUB_REPOSITORY}/releases/download/gmp/gmp-6.2.1.tar.bz2|' PrusaSlicer/deps/+GMP/GMP.cmake
-
-    - name: Replace Eigen hash
-      run: sed -i 's|e09b89aae054e9778ee3f606192ee76d645eec82c402c01c648b1fe46b6b9857|4815118c085ff1d5a21f62218a3b2ac62555e9b8d7bacd5093892398e7a92c4b|' PrusaSlicer/deps/+Eigen/Eigen.cmake
+      run: sed -i 's|https://gmplib.org/download/gmp/gmp-6.2.1.tar.bz2|https://github.com/${current_repo}/releases/download/gmp/gmp-6.2.1.tar.bz2|' PrusaSlicer/deps/+GMP/GMP.cmake
 
     - name: Configure dependencies build
       if: steps.cache-deps.outputs.cache-hit != 'true'
