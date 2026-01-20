@@ -12,6 +12,7 @@ RUN apt-get update \
   libglu1-mesa-dev \
   libgtk-3-dev \
   liblzma-dev \
+  libtool \
   libwebkit2gtk-4.1-dev \
   locales \
   ninja-build \
